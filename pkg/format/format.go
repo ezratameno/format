@@ -17,12 +17,12 @@ func FormatProm(obj any) (string, error) {
 	}
 
 	tagsMapping := make(map[string]string)
-	CollectAnnottationRec(tagsMapping, reflect.ValueOf(obj))
+	CollectTagsRec(tagsMapping, reflect.ValueOf(obj))
 	if _, ok := tagsMapping["metric_name"]; !ok {
-		return "", fmt.Errorf("missing metric_name annottation on struct")
+		return "", fmt.Errorf("missing metric_name  tag in struct")
 	}
 	if _, ok := tagsMapping["metric_value"]; !ok {
-		return "", fmt.Errorf("missing metric_name annottation on struct")
+		return "", fmt.Errorf("missing metric_value tag in struct")
 	}
 
 	var res string
@@ -40,9 +40,9 @@ func FormatProm(obj any) (string, error) {
 	return res, nil
 }
 
-// CollectAnnottationRec will collect the values of the fields recursvly from
+// CollectTagsRec will collect the values of the fields recursvly from
 //  the struct according the label tag.
-func CollectAnnottationRec(tagsMapping map[string]string, val reflect.Value) {
+func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
@@ -53,11 +53,11 @@ func CollectAnnottationRec(tagsMapping map[string]string, val reflect.Value) {
 		switch f.Kind() {
 		case reflect.Struct:
 			// get to the underlying fields of the struct.
-			CollectAnnottationRec(tagsMapping, f)
+			CollectTagsRec(tagsMapping, f)
 		case reflect.Slice:
 			// loop every member of the slice
 			for j := 0; j < f.Len(); j++ {
-				CollectAnnottationRec(tagsMapping, f.Index(i))
+				CollectTagsRec(tagsMapping, f.Index(i))
 			}
 			// assume we only send those types.
 		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16,
