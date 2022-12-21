@@ -66,6 +66,10 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 			reflect.Float64, reflect.String:
 
 			label := val.Type().Field(i).Tag.Get("label")
+			// if the label is empty skip
+			if label == "" {
+				continue
+			}
 			value := fmt.Sprintf("%v", val.Field(i).Interface())
 			// add to the mapping.
 			tagsMapping[label] = value

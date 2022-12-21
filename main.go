@@ -11,6 +11,7 @@ type metric struct {
 	Value      int    `label:"metric_value"`
 	Cpu        string `label:"label1"`
 	Mem        string `label:"label2"`
+	G          int
 	Sub        SubMetric
 }
 
