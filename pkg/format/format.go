@@ -54,6 +54,11 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 		case reflect.Struct:
 			// get to the underlying fields of the struct.
 			CollectTagsRec(tagsMapping, f)
+		case reflect.Map:
+			// go over all the map add add the key and value.
+			for _, key := range f.MapKeys() {
+				tagsMapping[key.String()] = f.MapIndex(key).String()
+			}
 		case reflect.Slice:
 			// loop every member of the slice
 			for j := 0; j < f.Len(); j++ {

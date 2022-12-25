@@ -13,6 +13,7 @@ type metric struct {
 	Mem        string `label:"label2"`
 	G          int
 	Sub        SubMetric
+	Labels     map[string]string `label:"label"`
 }
 
 type SubMetric struct {
@@ -34,6 +35,10 @@ func main() {
 			H: Human{
 				H: "fgdfg",
 			},
+		},
+		Labels: map[string]string{
+			"habana.ai/debug": "true",
+			"habana.ai/sche":  "false",
 		},
 	}
 
