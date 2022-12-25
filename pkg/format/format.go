@@ -80,7 +80,7 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 			}
 			value := fmt.Sprintf("%v", val.Field(i).Interface())
 			// add to the mapping.
-			tagsMapping[label] = value
+			tagsMapping[formatString(label)] = value
 
 		}
 
