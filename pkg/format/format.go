@@ -11,7 +11,7 @@ import (
 func FormatProm(obj any) (string, error) {
 	rv := reflect.ValueOf(obj)
 
-	// make sure we get only pointer.
+	// Make sure we get only pointer.
 	if rv.Kind() != reflect.Pointer || rv.IsNil() {
 		return "", fmt.Errorf("invalid type %s", reflect.TypeOf(obj))
 	}
@@ -27,7 +27,7 @@ func FormatProm(obj any) (string, error) {
 
 	var res string
 
-	// add all the common labels to the string.
+	// Add all the common labels to the string.
 	for labelName, value := range tagsMapping {
 		if labelName != "metric_name" && labelName != "metric_value" {
 			res = fmt.Sprintf("%s %s=%q", res, labelName, value)
@@ -35,13 +35,13 @@ func FormatProm(obj any) (string, error) {
 	}
 	res = strings.TrimSpace(res)
 
-	// add the metric name and value to the result in the format promethues expects.
+	// Add the metric name and value to the result in the format promethues expects.
 	res = fmt.Sprintf("%s{%s} %s", tagsMapping["metric_name"], res, tagsMapping["metric_value"])
 	return res, nil
 }
 
 // CollectTagsRec will collect the values of the fields recursvly from
-//  the struct according the label tag.
+// the struct according the label tag.
 func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 
 	if val.Kind() == reflect.Ptr {
@@ -52,10 +52,12 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 		f := val.Field(i)
 		switch f.Kind() {
 		case reflect.Struct:
-			// get to the underlying fields of the struct.
+
+			// Get to the underlying fields of the struct.
 			CollectTagsRec(tagsMapping, f)
 		case reflect.Map:
-			// go over all the map add add the key and value.
+
+			// Go over all the map add add the key and value.
 			for _, key := range f.MapKeys() {
 				k := key.String()
 				val := f.MapIndex(key).String()
@@ -63,23 +65,26 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 				tagsMapping[k] = val
 			}
 		case reflect.Slice:
-			// loop every member of the slice
+			// Loop every member of the slice
 			for j := 0; j < f.Len(); j++ {
 				CollectTagsRec(tagsMapping, f.Index(i))
 			}
-			// assume we only send those types.
+
+			// Assume we only send those types.
 		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16,
 			reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8,
 			reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32,
 			reflect.Float64, reflect.String:
 
 			label := val.Type().Field(i).Tag.Get("label")
-			// if the label is empty skip
+
+			// If the label is empty skip
 			if label == "" {
 				continue
 			}
 			value := fmt.Sprintf("%v", val.Field(i).Interface())
-			// add to the mapping.
+
+			// Add to the mapping.
 			tagsMapping[formatString(label)] = value
 
 		}
