@@ -13,7 +13,7 @@ type metric struct {
 	Mem        string `label:"label2"`
 	G          int
 	Sub        SubMetric
-	Labels     map[string]string `label:"label"`
+	Labels     map[string]string
 }
 
 type SubMetric struct {

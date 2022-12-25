@@ -57,7 +57,10 @@ func CollectTagsRec(tagsMapping map[string]string, val reflect.Value) {
 		case reflect.Map:
 			// go over all the map add add the key and value.
 			for _, key := range f.MapKeys() {
-				tagsMapping[key.String()] = f.MapIndex(key).String()
+				k := key.String()
+				val := f.MapIndex(key).String()
+				k = formatString(k)
+				tagsMapping[k] = val
 			}
 		case reflect.Slice:
 			// loop every member of the slice
