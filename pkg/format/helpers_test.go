@@ -14,9 +14,9 @@ func Test_formatString(t *testing.T) {
 		{
 			name: "test format string",
 			args: args{
-				s: "ezra.ai/cluster",
+				s: "ezra1.ai/cluster",
 			},
-			want: "ezra_ai_cluster",
+			want: "ezra1_ai_cluster",
 		},
 	}
 	for _, tt := range tests {
