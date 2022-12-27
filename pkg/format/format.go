@@ -33,6 +33,7 @@ func FormatProm(obj any) (string, error) {
 			res = fmt.Sprintf("%s %s=%q", res, labelName, value)
 		}
 	}
+	//
 	res = strings.TrimSpace(res)
 
 	// Add the metric name and value to the result in the format promethues expects.
