@@ -36,7 +36,7 @@ func FormatProm(obj any) (string, error) {
 	res = strings.TrimSpace(res)
 
 	// Add the metric name and value to the result in the format promethues expects.
-	res = fmt.Sprintf("%s{%s} %s", tagsMapping["metric_name"], res, tagsMapping["metric_value"])
+	res = fmt.Sprintf("%s{%s} %s", formatString(tagsMapping["metric_name"]), res, tagsMapping["metric_value"])
 	return res, nil
 }
 
