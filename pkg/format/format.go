@@ -4,8 +4,28 @@ package format
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 )
+
+type Labels []Label
+
+type Label struct {
+	key   string
+	value string
+}
+
+func (l Labels) Len() int {
+	return len(l)
+}
+
+func (l Labels) Less(i, j int) bool {
+	return l[i].key > l[j].key
+}
+
+func (l Labels) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
 
 // FormatProm will format the struct according to the label tag and return a string in the format promethues expects.
 func FormatProm(obj any) (string, error) {
@@ -25,15 +45,24 @@ func FormatProm(obj any) (string, error) {
 		return "", fmt.Errorf("missing metric_value tag in struct")
 	}
 
-	var res string
-
+	var labels Labels
 	// Add all the common labels to the string.
 	for labelName, value := range tagsMapping {
 		if labelName != "metric_name" && labelName != "metric_value" {
-			res = fmt.Sprintf("%s %s=%q", res, labelName, value)
+			labels = append(labels, Label{
+				key:   labelName,
+				value: value,
+			})
 		}
 	}
-	//
+
+	// sort by key
+	sort.Sort(Labels(labels))
+
+	var res string
+	for _, label := range labels {
+		res = fmt.Sprintf("%s %s=%q", res, label.key, label.value)
+	}
 	res = strings.TrimSpace(res)
 
 	// Add the metric name and value to the result in the format promethues expects.
