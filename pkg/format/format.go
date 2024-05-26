@@ -60,8 +60,13 @@ func FormatProm(obj any) (string, error) {
 	sort.Sort(Labels(labels))
 
 	var res string
-	for _, label := range labels {
-		res = fmt.Sprintf("%s %s=%q", res, label.key, label.value)
+	for i, label := range labels {
+
+		if i == 0 {
+			res = fmt.Sprintf("%s %s=%q", res, label.key, label.value)
+			continue
+		}
+		res = fmt.Sprintf("%s, %s=%q", res, label.key, label.value)
 	}
 	res = strings.TrimSpace(res)
 
